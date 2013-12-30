@@ -16,6 +16,7 @@ function TimerJS(selector,config) {
     ,prog_color: "#76d6ff"
     ,prog_background: "#011993"
     ,blink: false
+    ,pre_text: ""
   }
   this.init(selector,config);
 }
@@ -112,7 +113,7 @@ TimerJS.prototype.process_timer = function () {
       var prog = this.timerList[i].in_progress;
       var color = (prog?this.o.prog_color:this.o.alert_color)
       var background = (prog?this.o.prog_background:this.o.alert_background)
-      clock.innerHTML = this.time(mil,colon);
+      clock.innerHTML = this.o.pre_text + this.time(mil,colon);
       if (mil < this.o.alert_end1) {
         if(!this.timerList[i].show && mil < this.o.alert_end2) {
           clock.innerHTML = this.o.time_null;
