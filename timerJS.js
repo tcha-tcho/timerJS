@@ -5,6 +5,7 @@
 function TimerJS(selector,config) {
   this.defaults = {
      on_end: function( el ){}
+    ,in_progress: function( el ){}
     ,end_text: "end"
     ,alert_end1: 120000
     ,alert_end2: 60000
@@ -113,6 +114,7 @@ TimerJS.prototype.process_timer = function () {
             clock.style.background = this.o.prog_background;
             this.timerList[i].in_progress = true;
             this.timerList[i].Milliseconds = this.timerList[i].Duration;
+            this.o.in_progress(this.timerList[i].clock);
           } else {
             var dots = ".".repeat((this.o.end_text.length -10)*-1);
             clock.innerHTML = dots + this.o.end_text;
@@ -125,7 +127,4 @@ TimerJS.prototype.process_timer = function () {
       }
     };
   };
-};
-
-TimerJS.prototype.set_timer = function () {
 };
