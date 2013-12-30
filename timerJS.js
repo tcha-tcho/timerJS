@@ -7,6 +7,7 @@ function TimerJS(selector,config) {
      on_end: function( el ){}
     ,in_progress: function( el ){}
     ,end_text: "end"
+    ,time_null: ".:..:..:.."
     ,alert_end1: 120000
     ,alert_end2: 60000
     ,alert_end3: 20000
@@ -18,7 +19,7 @@ function TimerJS(selector,config) {
   this.init(selector,config);
 }
 
-Object.prototype.extend = function() {
+TimerJS.prototype.extend = function() {
   for(var i=1; i<arguments.length; i++)
     for(var key in arguments[i])
       if(arguments[i].hasOwnProperty(key))
@@ -31,7 +32,7 @@ String.prototype.repeat = function( num ) {
 }
 
 TimerJS.prototype.init = function (selector,config) {
-  this.o = {}.extend(this.defaults, config);
+  this.o = this.extend(this.defaults, config);
 
   var elements = document.querySelectorAll(selector),
   i;
@@ -61,19 +62,23 @@ TimerJS.prototype.two = function (numb) {
 };
 
 TimerJS.prototype.time = function (ms) {
-  var sec = Math.floor(ms/1000)
-  ms = ms % 1000
-  var min = Math.floor(sec/60)
-  sec = sec % 60
-  var t = this.two(sec);
-  var hr = Math.floor(min/60)
-  min = min % 60
-  t = this.two(min) + ":" + t
-  var day = Math.floor(hr/60)
-  hr = hr % 60
-  t = this.two(hr) + ":" + t
-  t = day + ":" + t
-  return t
+  if (ms > 0) {
+    var sec = Math.floor(ms/1000)
+    ms = ms % 1000
+    var min = Math.floor(sec/60)
+    sec = sec % 60
+    var t = this.two(sec);
+    var hr = Math.floor(min/60)
+    min = min % 60
+    t = this.two(min) + ":" + t
+    var day = Math.floor(hr/60)
+    hr = hr % 60
+    t = this.two(hr) + ":" + t
+    t = day + ":" + t
+    return t
+  } else {
+    return this.o.time_null;
+  };
 };
 
 TimerJS.prototype.parse_time = function (el,attr) {
@@ -95,7 +100,7 @@ TimerJS.prototype.process_timer = function () {
       clock.innerHTML = this.time(mil);
       if (mil < this.o.alert_end1) {
         if(!this.timerList[i].show && mil < this.o.alert_end2) {
-          clock.innerHTML = ".:..:..:..";
+          clock.innerHTML = this.o.time_null;
           this.timerList[i].show = true;
         }else{
           this.timerList[i].show = false;
@@ -113,7 +118,7 @@ TimerJS.prototype.process_timer = function () {
             clock.style.color = this.o.prog_color;
             clock.style.background = this.o.prog_background;
             this.timerList[i].in_progress = true;
-            this.timerList[i].Milliseconds = this.timerList[i].Duration;
+            this.timerList[i].Milliseconds = this.timerList[i].Duration + mil;
             this.o.in_progress(this.timerList[i].clock);
           } else {
             var dots = ".".repeat((this.o.end_text.length -10)*-1);
