@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TimerJS - Tests</title>
+  <script type="text/javascript" src="./timerJS.js"></script>
+  <style type="text/css">
+    .timer_js {
+      font-family:monospace;
+      font-size: 0.8em;
+      background-color:none;
+      color: green;
+      border: none;
+      padding: 0px;
+      padding-bottom:2px;
+      text-shadow:none;
+      top: -2px;
+      position: relative;
+      padding-left: 3px;
+      padding-right: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <div>
+    <span class="timer_js" data-timer="5000" data-dur="60000"></span>
+  </div>
+  <div>
+    <span class="timer_js" data-timer="16000"></span>
+  </div>
+  <div>
+    <span class="timer_js" data-timer="4000"></span>
+  </div>
+
+  <script type="text/javascript">
+    var timers = new TimerJS('.timer_js',{
+      on_end:function(el){
+        console.log(el)
+      }
+    });
+  </script>
+
+</body>
+</html>
