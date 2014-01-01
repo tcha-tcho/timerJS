@@ -29,11 +29,6 @@ TimerJS.prototype.extend = function() {
   return arguments[0];
 }
 
-String.prototype.repeat = function( num ) {
-  if (num < 0) return "";
-  return new Array( num + 1 ).join( this );
-}
-
 TimerJS.prototype.init = function (selector,config) {
   var _self = this;
   this.o = this.extend(this.defaults, config);
@@ -92,7 +87,7 @@ TimerJS.prototype.time = function (ms,colon) {
     t = day + colon + t
     return t
   } else {
-    return this.o.time_null;
+    return this.o.pre_text + this.o.time_null;
   };
 };
 
@@ -116,7 +111,7 @@ TimerJS.prototype.process_timer = function () {
       clock.innerHTML = this.o.pre_text + this.time(mil,colon);
       if (mil < this.o.alert_end1) {
         if(!this.timerList[i].show && mil < this.o.alert_end2) {
-          clock.innerHTML = this.o.time_null;
+          clock.innerHTML = this.o.pre_text + this.o.time_null;
           this.timerList[i].show = true;
         }else{
           this.timerList[i].show = false;
@@ -137,8 +132,7 @@ TimerJS.prototype.process_timer = function () {
             this.timerList[i].d_timer = this.timerList[i].d_dur;
             this.o.in_progress(this.timerList[i].clock);
           } else {
-            var dots = ".".repeat((this.o.end_text.length -10)*-1);
-            clock.innerHTML = dots + this.o.end_text;
+            clock.innerHTML = this.o.pre_text + this.o.end_text;
             clock.style.color = color;
             clock.style.background = background;
             this.o.on_end(this.timerList[i].clock);
