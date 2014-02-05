@@ -4,7 +4,7 @@
   <title>TimerJS - Tests</title>
   <script type="text/javascript" src="./timerJS.js"></script>
   <style type="text/css">
-    .timer_js {
+    .timer_js, .timer_js_no_pad {
       font-family:monospace;
       font-size: 0.8em;
       background-color:none;
@@ -32,11 +32,22 @@
     <span class="timer_js" data-timer="4000"></span>
   </div>
 
+  <hr>
+    pad_zero: false
+  <hr>
+  <div>
+    <span class="timer_js_no_pad" data-timer="125000" data-dur="60000"></span>
+  </div>
+
   <script type="text/javascript">
     var timers = new TimerJS('.timer_js',{
       on_end:function(el){
         console.log(el)
       }
+      ,pad_zero: true
+    });
+    var timers_no_pad = new TimerJS('.timer_js_no_pad',{
+      pad_zero: false
     });
   </script>
 

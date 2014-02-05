@@ -6,6 +6,7 @@ function TimerJS(selector,config) {
   this.defaults = {
      on_end: function( el ){}
     ,in_progress: function( el ){}
+    ,on_ready: function(  ){}
     ,end_text: "end"
     ,time_null: ".:..:..:.."
     ,alert_end1: 120000
@@ -16,6 +17,7 @@ function TimerJS(selector,config) {
     ,prog_color: "#76d6ff"
     ,prog_background: "#011993"
     ,blink: false
+    ,pad_zero: false
     ,pre_text: ""
   }
   this.init(selector,config);
@@ -35,7 +37,7 @@ TimerJS.prototype.init = function (selector,config) {
   var elements = document.querySelectorAll(selector);
   this.timerList = [];
   this.now = new Date().getTime();
-  window.clearInterval(window.timerjs_interval);
+  window.clearInterval(this.timerjs_interval);
   if (elements.length < 1) return;
   for (var i = 0; i < elements.length; i += 1) {
     var d_timer = new Date();
@@ -51,8 +53,8 @@ TimerJS.prototype.init = function (selector,config) {
     });
   };
   if (elements.length) {
-    window.clearInterval(window.timerjs_interval);
-    window.timerjs_interval = window.setInterval(function(){
+    window.clearInterval(this.timerjs_interval);
+    this.timerjs_interval = window.setInterval(function(){
       _self.process_timer();
     },1000)
   };
@@ -65,10 +67,16 @@ TimerJS.prototype.init = function (selector,config) {
   document.visibilityChange = function () { 
     if (elements.length) _self.process_timer();
   }; 
+  this.o.on_ready();
 };
 
-TimerJS.prototype.two = function (numb) {
-  return ((numb>9)?"":"0")+numb;
+TimerJS.prototype.two = function (numb,colon,force) {
+  if (force) colon = "";
+  if (!this.o.pad_zero && !force) {
+    return (numb || "") + (numb?colon:"");
+  } else {
+    return ((numb>9)?"":"0")+numb + colon;
+  };
 };
 
 TimerJS.prototype.time = function (ms,colon) {
@@ -77,14 +85,17 @@ TimerJS.prototype.time = function (ms,colon) {
     ms = ms % 1000
     var min = Math.floor(sec/60)
     sec = sec % 60
-    var t = this.two(sec);
+    var t = this.two(sec,colon,true);
     var hr = Math.floor(min/60)
     min = min % 60
-    t = this.two(min) + colon + t
+    if (!this.o.pad_zero) min = (min || "");
+    t = this.two(min,colon) + t
     var day = Math.floor(hr/60)
     hr = hr % 60
-    t = this.two(hr) + colon + t
-    t = day + colon + t
+    if (!this.o.pad_zero) hr = (hr || "");
+    t = this.two(hr,colon) + t
+    if (!this.o.pad_zero) day = (day || "");
+    t = this.two(day,colon) + t
     return t
   } else {
     return this.o.pre_text + this.o.time_null;
@@ -98,7 +109,7 @@ TimerJS.prototype.parse_mil = function (el,attr) {
 
 TimerJS.prototype.process_timer = function () {
   if (!this.timerList.length){
-    window.clearInterval(window.timerjs_interval)
+    window.clearInterval(this.timerjs_interval)
   } else {
     var colon = ":";
     if (this.o.blink) colon = (this.blink ^= true)?":":" ";
@@ -111,6 +122,7 @@ TimerJS.prototype.process_timer = function () {
       clock.innerHTML = this.o.pre_text + this.time(mil,colon);
       if (mil < this.o.alert_end1) {
         if(!this.timerList[i].show && mil < this.o.alert_end2) {
+          if (!this.o.pad_zero) this.o.time_null = Array( clock.innerHTML.length + 1 ).join( "." );
           clock.innerHTML = this.o.pre_text + this.o.time_null;
           this.timerList[i].show = true;
         }else{
