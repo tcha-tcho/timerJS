@@ -34,10 +34,11 @@ TimerJS.prototype.extend = function() {
 TimerJS.prototype.init = function (selector,config) {
   var _self = this;
   this.o = this.extend(this.defaults, config);
+  this.o.selector = selector;
   var elements = document.querySelectorAll(selector);
   this.timerList = [];
   this.now = new Date().getTime();
-  window.clearInterval(this.timerjs_interval);
+  window.clearInterval(window["timerjs_interval"+this.o.selector]);
   if (elements.length < 1) return;
   for (var i = 0; i < elements.length; i += 1) {
     var d_timer = new Date();
@@ -53,8 +54,8 @@ TimerJS.prototype.init = function (selector,config) {
     });
   };
   if (elements.length) {
-    window.clearInterval(this.timerjs_interval);
-    this.timerjs_interval = window.setInterval(function(){
+    window.clearInterval(window["timerjs_interval"+this.o.selector]);
+    window["timerjs_interval"+this.o.selector] = window.setInterval(function(){
       _self.process_timer();
     },1000)
   };
@@ -109,7 +110,7 @@ TimerJS.prototype.parse_mil = function (el,attr) {
 
 TimerJS.prototype.process_timer = function () {
   if (!this.timerList.length){
-    window.clearInterval(this.timerjs_interval)
+    window.clearInterval(window["timerjs_interval"+this.o.selector])
   } else {
     var colon = ":";
     if (this.o.blink) colon = (this.blink ^= true)?":":" ";
